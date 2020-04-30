@@ -17,7 +17,7 @@ class CreatePermissionsTable extends Migration
         {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->text('desc', 255)->nullable();
             $table->timestamps();
         });
@@ -26,7 +26,7 @@ class CreatePermissionsTable extends Migration
         {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->text('desc', 255)->nullable();
             $table->timestamps();
         });
