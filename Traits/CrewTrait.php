@@ -27,10 +27,7 @@ trait CrewTrait
 
         if(is_array($roles))
             foreach($roles as $role)
-                if($this->hasRole($role))
-                    return true;
-
-            return false;
+                return $this->hasRole($role);
     }
 
     /**
