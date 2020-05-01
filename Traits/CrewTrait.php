@@ -1,11 +1,12 @@
 <?php
 namespace CodeForms\Repositories\Crew\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Collection;
 use CodeForms\Repositories\Crew\Models\Role;
 use CodeForms\Repositories\Crew\Models\Permission;
 use CodeForms\Repositories\Crew\Traits\PermissionTrait;
-use CodeForms\Repositories\Crew\Exceptions\RoleDoesNotExist;
+//use CodeForms\Repositories\Crew\Exceptions\RoleDoesNotExist;
 /**
  * 
  */
@@ -23,42 +24,25 @@ trait CrewTrait
      * 
      * @return boolean
      */
-    public function hasRole($roles): bool
+    public function hasRole(...$roles): bool
     {
-        if(is_string($roles))
-            return $this->roles->contains('slug', $roles);
-
-        if(is_array($roles))
-            foreach($roles as $role)
-                return $this->hasRole($role);
+        foreach($roles as $role)
+            return $this->roles->contains('slug', $role);
     }
 
     /**
-     * @param array|string|null $role
+     * @param array|string|null $roles
      * @example $user->setRole() (revoke all roles)
      * @example $user->setRole('Customer')
      * @example $user->setRole(['Manager', 'Customer'])
      * 
      * @return mixed
      */
-    public function setRole($roles = null)
+    public function setRole(...$roles)
     {
-        return $this->roles()->sync(self::getRoleObject($roles));
-    }
+        $roles = Arr::flatten($roles);
 
-    /**
-     * @param string|array $role
-     * @access private
-     *
-     * @return mixed
-     */
-    private function getRoleObject($roles)
-    {
-        if(is_string($roles))
-            return self::findRole($roles);
-
-        if(is_array($roles))
-            return self::roleCollection($roles);
+        return $this->roles()->sync(self::roleCollection($roles));
     }
 
     /**

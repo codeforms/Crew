@@ -2,6 +2,7 @@
 namespace CodeForms\Repositories\Crew\Traits;
 
 use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Collection;
 use CodeForms\Repositories\Crew\Models\Permission;
 /**
  * 
@@ -33,6 +34,18 @@ trait PermissionTrait
     }
     
     /**
+     * @param $permissions
+     * 
+     * @return mixed
+     */
+    public function setPermission(...$permissions)
+    {
+        $permissions = Arr::flatten($permissions);
+
+        return $this->permissions()->sync(self::permissionCollection($permissions));
+    }
+
+    /**
      * @param $permission
      * @access private
      * 
@@ -44,58 +57,31 @@ trait PermissionTrait
     }
 
     /**
-     * @param $permission
-     * 
-     * @return mixed
-     */
-    public function addPermission(...$permission)
-    {
-        if($permissions = self::mediator($permission))
-            return $this->permissions()->saveMany($permissions);
-    }
-
-    /**
-     * @param $permission
-     */
-    public function removePermission(...$permission)
-    {
-        return self::detachPermissions(self::mediator($permission));
-    }
-
-    /**
-     * @param $permissions
-     */
-    public function changePermission(...$permissions)
-    {
-        if(self::detachPermissions())
-            return self::addPermission($permissions);
-    }
-
-    /**
-     * @param $permission
-     */
-    public function detachPermissions($permission = null)
-    {
-        return $this->permissions()->detach($permission);
-    }
-
-    /**
-     * @param $permission
-     * @access private
-     */
-    private function mediator($permission)
-    {
-        return self::getPermissions(Arr::flatten($permission));
-    }
-
-    /**
-     * @param $permissions
+     * @param array $permissions
      * @access private
      * 
      * @return object
      */
-    private function getPermissions(...$permissions)
+    private function permissionCollection($permissions): object
     {
-        return Permission::whereIn('slug', (array)$permissions)->get();
+        $collection = new Collection;
+
+        foreach($permissions as $permission)
+            $package = $collection->push(self::getPermissions($permission));
+
+        return $package->filter(function ($result) {
+            return is_object($result);
+        });
+    }
+
+    /**
+     * @param $permission
+     * @access private
+     * 
+     * @return object
+     */
+    private function getPermissions($permission)
+    {
+        return Permission::where('slug', $permission)->first();
     }
 }
