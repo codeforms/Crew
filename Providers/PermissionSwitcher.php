@@ -45,6 +45,6 @@ class PermissionSwitcher
      */
     public function getPermissions()
     {
-        return Permission::with('roles')->get();
+        return Permission::all();
     }
 }

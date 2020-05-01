@@ -1,6 +1,7 @@
 <?php
 namespace CodeForms\Repositories\Crew\Traits;
 
+use Illuminate\Database\Eloquent\Collection;
 use CodeForms\Repositories\Crew\Models\Role;
 use CodeForms\Repositories\Crew\Models\Permission;
 use CodeForms\Repositories\Crew\Traits\PermissionTrait;
@@ -17,10 +18,12 @@ trait CrewTrait
 
     /**
      * @param $roles
+     * @example $user->hasRole('Manager')
+     * @example $user->hasRole(['Manager', 'Editor']) (has any role)
      * 
-     * @return mixed
+     * @return boolean
      */
-    public function hasRole($roles)
+    public function hasRole($roles): bool
     {
         if(is_string($roles))
             return $this->roles->contains('slug', $roles);
@@ -31,24 +34,60 @@ trait CrewTrait
     }
 
     /**
-     * @param $role
+     * @param array|string|null $role
+     * @example $user->setRole() (revoke all roles)
+     * @example $user->setRole('Customer')
+     * @example $user->setRole(['Manager', 'Customer'])
+     * 
+     * @return mixed
      */
-    public function setRole($role)
+    public function setRole($roles = null)
     {
-        return $this->roles()->sync($this->getRole($role));
+        return $this->roles()->sync(self::getRoleObject($roles));
     }
 
     /**
-     * @param $role
+     * @param string|array $role
+     * @access private
      *
      * @return mixed
      */
-    protected function getRole($role)
-    { 
-        if($role = Role::whereIn('slug', (array)$role)->first())
-            return $role;
+    private function getRoleObject($roles)
+    {
+        if(is_string($roles))
+            return self::findRole($roles);
 
-        return null;
+        if(is_array($roles))
+            return self::roleCollection($roles);
+    }
+
+    /**
+     * @param string $slug
+     * @access private
+     * 
+     * @return object|null
+     */
+    private function findRole($slug)
+    {
+        return Role::where('slug', $slug)->first();
+    }
+
+    /**
+     * @param array $roles
+     * @access private
+     * 
+     * @return object
+     */
+    private function roleCollection($roles): object
+    {
+        $collection = new Collection;
+
+        foreach($roles as $role)
+            $package = $collection->push(self::findRole($role));
+
+        return $package->filter(function ($value) {
+            return is_object($value);
+        });
     }
 
     /**
