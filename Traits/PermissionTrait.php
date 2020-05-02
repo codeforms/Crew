@@ -16,7 +16,7 @@ trait PermissionTrait
      */
     public function hasPermission($permission): bool
     {
-        return self::hasRolePermission($permission) or self::hasUserPermission($permission);
+        return self::hasRolePermission($permission) or self::hasThisPermission($permission);
     }
 
     /**
@@ -26,6 +26,9 @@ trait PermissionTrait
      */
     public function hasRolePermission($permission): bool
     {
+        if(!isset($this->roles))
+            return false;
+
         if((bool)$this->roles()->count())
             foreach($this->roles as $role)
                 return $role->hasPermission($permission);
@@ -51,7 +54,7 @@ trait PermissionTrait
      * 
      * @return boolean
      */
-    private function hasUserPermission($permission): bool
+    private function hasThisPermission($permission): bool
     {
         return (bool)$this->permissions->where('slug', $permission)->count();
     }
@@ -67,7 +70,7 @@ trait PermissionTrait
         $collection = new Collection;
 
         foreach($permissions as $permission)
-            $package = $collection->push(self::getPermissions($permission));
+            $package = $collection->push(self::getPermission($permission));
 
         return $package->filter(function ($result) {
             return is_object($result);
@@ -80,7 +83,7 @@ trait PermissionTrait
      * 
      * @return object
      */
-    private function getPermissions($permission)
+    private function getPermission($permission)
     {
         return Permission::where('slug', $permission)->first();
     }

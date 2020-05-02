@@ -1,26 +1,25 @@
 <?php
 namespace CodeForms\Repositories\Crew\Models;
 
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
+use CodeForms\Repositories\Crew\Traits\PermissionTrait;
 /**
  * 
  */
 class Role extends Model
 {
+    /**
+     * 
+     */
+    use PermissionTrait;
+
 	/**
      * @var array
      */
     protected $fillable = [
         'name', 'slug', 'description',
     ];
-
-    /**
-     * 
-     */
-    public function hasPermission($permission)
-    {
-        return $this->permissions->contains('slug', $permission);
-    }
 
 	/**
 	 * 
