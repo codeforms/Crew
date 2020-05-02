@@ -26,8 +26,11 @@ trait CrewTrait
      */
     public function hasRole(...$roles): bool
     {
-        foreach($roles as $role)
-            return $this->roles->contains('slug', $role);
+        if((bool)count($roles))
+             foreach(Arr::flatten($roles) as $role)
+                return $this->roles->contains('slug', $role);
+
+        return false;
     }
 
     /**
@@ -40,9 +43,8 @@ trait CrewTrait
      */
     public function setRole(...$roles)
     {
-        $roles = Arr::flatten($roles);
-
-        return $this->roles()->sync(self::roleCollection($roles));
+        if((bool)count($roles))
+            return $this->roles()->sync(self::roleCollection(Arr::flatten($roles)));
     }
 
     /**
