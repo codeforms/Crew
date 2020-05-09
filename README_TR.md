@@ -43,6 +43,8 @@ class User extends Authenticatable
 ```
 
 ## Kullanım
+> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız.
+
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
 ```php
