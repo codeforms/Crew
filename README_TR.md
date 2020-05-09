@@ -7,7 +7,7 @@ Laravel tabanlı yapılar için basit ve hafif kullanıcı grupları ve yetkiler
 
 > Crew yapısı, rol ve yetki oluşturma/düzenleme/silme vb klasik CRUD işlemleri için metotlar içermez. Laravel'de CRUD işlemlerinin nasıl yapıldığına dair internet üzerinden birçok kaynağa erişilebilir.
 
-### Kurulum
+## Kurulum
 * Migration dosyasını kullanarak veri tabanı için gerekli tabloları oluşturun;
 ``` php artisan migrate```
 * Laravel'in app.php config dosyasının ```providers``` alanına aşağıdaki satırı ekleyin;
@@ -42,7 +42,7 @@ class User extends Authenticatable
     use Notifiable, CrewTrait;
 ```
 
-### Kullanım
+## Kullanım
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
 ```php
