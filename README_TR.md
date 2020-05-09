@@ -1,5 +1,6 @@
 # Crew
 Laravel tabanlı yapılar için basit ve hafif kullanıcı grupları ve yetkileri sistemi.
+
 [![GitHub license](https://img.shields.io/github/license/codeforms/Crew)](https://github.com/codeforms/Crew/blob/master/LICENSE)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/codeforms/Crew)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](https://github.com/codeforms/Crew/releases)
@@ -29,7 +30,6 @@ protected $routeMiddleware = [
 ```
 * Son olarak app/User.php model dosyanıza Crew yapısına ait CrewTrait dosyasını ekleyin;
 ```php
-<?php
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -64,7 +64,7 @@ $role->hasPermission(['edit-post', 'delete-post']);
 ```
 ##### Blade dosyalarında rol ve yetki sorgulama
 Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
-```php
+```
 @role('Editor')
 	Bu alanı sadece Editor rolüne sahip olan kullanıcılar görebilir.
 @else 
