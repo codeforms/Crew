@@ -75,6 +75,12 @@ Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla 
 	Bu bölümü sadece Editor ve Admin rolüne sahip olanlar görebilir.
 @endrole
 ```
+Blade dosyaları içinde yetki sorgulamak için Laravel'in varsayılan @can direktifi kullanılabilir.
+```blade
+@can('edit-post')
+	'edit-post' yetkisine sahip olanlar görebilir.
+@endcan
+``` 
 
 #### Rota(route) dosyalarında role ve yetkilerin kullanımı
 Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabilir. Yetki veya roller, rotanın ```middleware``` alanında belirtilir. Birden fazla rol ve yetki belirtmek istediğimizde '\|' dik çizgi (pipe) işareti kullanılır. 
