@@ -43,7 +43,7 @@ class User extends Authenticatable
 ```
 
 ### Kullanım
-##### Rol ve Yetki Sorgulama
+#### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
 ```php
 $user = User::find(1);
@@ -62,7 +62,7 @@ $role = Role::find(1);
 $role->hasPermission('edit-post');
 $role->hasPermission(['edit-post', 'delete-post']);
 ```
-##### Blade dosyalarında rol ve yetki sorgulama
+#### Blade dosyalarında rol ve yetki sorgulama
 Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
 ```blade
 @role('Editor')
@@ -76,7 +76,7 @@ Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla 
 @endrole
 ```
 
-##### Rota(route) dosyalarında role ve yetkilerin kullanımı
+#### Rota(route) dosyalarında role ve yetkilerin kullanımı
 Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabilir. Yetki veya roller, rotanın ```middleware``` alanında belirtilir. Birden fazla rol ve yetki belirtmek istediğimizde '\|' dik çizgi (pipe) işareti kullanılır. 
 ```php
 /**
