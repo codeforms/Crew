@@ -64,7 +64,7 @@ $role->hasPermission(['edit-post', 'delete-post']);
 ```
 ##### Blade dosyalarında rol ve yetki sorgulama
 Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
-```
+```blade
 @role('Editor')
 	Bu alanı sadece Editor rolüne sahip olan kullanıcılar görebilir.
 @else 
