@@ -130,10 +130,14 @@ Route::group([
 
 	# aşağıdaki rotaya, üstteki rota grubunda belirtilen 'edit-post' ve 'delete-post'
 	# yetkilerine sahip olmanın yanında, ayrıca 'upload' yetkisi olanlar girebilir.
+	# Yani bir kullanıcı, rota grubunda belirtilen yetkilere (edit-post, delete-post) 
+	# sahip olsa bile, eğer 'upload' yetkisine sahip değilse bu rotaya erişemez.
 	Route::get('posts/{id}', 'BackendPostController@edit')->middleware('permission:upload');
 
 	# bu rotaya, üstteki rota grubunda belirtilen yetkilere sahip olmanın yanında, 
-	# ayrıca 'Admin' rolüne sahip olanlar erişebilir
+	# ayrıca 'Admin' rolüne sahip olanlar erişebilir. Yani bir kullanıcı, rota grubunda 
+	# belirtilen yetkilere (edit-post, delete-post) sahip olsa bile, eğer Admin değilse 
+	# bu rotaya erişemez.
 	Route::post('posts/{id}/delete', 'BackendPostController@delete')->middleware('role:Admin');
 	...
 ```
