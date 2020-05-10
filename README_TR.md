@@ -43,7 +43,7 @@ class User extends Authenticatable
 ```
 
 ## Kullanım
-> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız.
+> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. CRUD işlemleri için ```Models``` dizininde yer alan ```Role``` ve ```Permission``` model dosyalarını kullanınız.
 
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
@@ -106,4 +106,31 @@ Route::get('admin/users', 'BackendUserController@index')->middleware('role:Admin
 
 # Admin ve Editor rolüne sahip olanlar bu sayfaya erişebilir
 Route::get('admin/posts', 'BackendPostController@index')->middleware('role:Admin|Editor');
+
+/**
+ * Rota grupları için middleware tanımlaması.
+ * 
+ * Bir rota grubu için tanımlanan rol veya yetkiler,
+ * grup içinde tanımlanacak olan tüm rotalar için geçerli olur.
+ * Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
+ */
+Route::group([
+	'prefix'     => 'admin/dashboard',
+	'middleware' => 'role:Admin|Editor'
+], function () 
+{
+	Route::get('admin/posts', 'BackendPostController@index');
+	Route::get('admin/posts/{id}', 'BackendPostController@edit');
+	...
+/**
+ * Rota grupları için middleware'de 'yetki' tanımlama
+ */
+Route::group([
+	'prefix'     => 'admin/dashboard',
+	'middleware' => 'permission:edit-post|delete-post|upload'
+], function () 
+{
+	Route::get('admin/posts', 'BackendPostController@index');
+	Route::get('admin/posts/{id}', 'BackendPostController@edit');
+	...
 ```
