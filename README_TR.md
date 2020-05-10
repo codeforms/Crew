@@ -123,10 +123,17 @@ Route::group([
  */
 Route::group([
 	'prefix'     => 'admin/dashboard',
-	'middleware' => 'permission:edit-post|delete-post|upload'
+	'middleware' => 'permission:edit-post|delete-post'
 ], function () 
 {
 	Route::get('posts', 'BackendPostController@index');
-	Route::get('posts/{id}', 'BackendPostController@edit');
+
+	# aşağıdaki rotaya, üstteki rota grubunda belirtilen 'edit-post' ve 'delete-post'
+	# yetkilerine sahip olmanın yanında, ayrıca 'upload' yetkisi olanlar girebilir.
+	Route::get('posts/{id}', 'BackendPostController@edit')->middleware('permission:upload');
+
+	# bu rotaya, üstteki rota grubunda belirtilen yetkilere sahip olmanın yanında, 
+	# ayrıca 'Admin' rolüne sahip olanlar erişebilir
+	Route::post('posts/{id}/delete', 'BackendPostController@delete')->middleware('role:Admin');
 	...
 ```
