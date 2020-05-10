@@ -90,12 +90,12 @@ Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabil
 /**
  * Yetkiler
  */
-# 'admin' sayfasına sadece 'dashboard 'yetkisine
-# sahip olan kullanıcılar veya roller erişebilir
+# aşağıdaki 'admin' sayfasına sadece 'dashboard 'yetkisine
+# sahip olan kullanıcılar veya bu yetkiye sahip roller erişebilir
 Route::get('admin', 'DashboardController@index')->middleware('permission:dashboard');
 
 # aşağıdaki içerik düzenleme sayfasına sadece 'dashboard' ve 'edit-post'
-# yetkisine sahip kullanıcılar veya roller erişebilir.
+# yetkisine sahip kullanıcılar veya bu yetkiye sahip roller erişebilir.
 Route::get('admin/post/{id}', 'DashboardController@edit')->middleware('permission:dashboard|edit-post');
 
 /**
@@ -106,21 +106,17 @@ Route::get('admin/users', 'BackendUserController@index')->middleware('role:Admin
 
 # Admin ve Editor rolüne sahip olanlar bu sayfaya erişebilir
 Route::get('admin/posts', 'BackendPostController@index')->middleware('role:Admin|Editor');
-
-/**
- * Rota grupları için middleware tanımlaması.
- * 
- * Bir rota grubu için tanımlanan rol veya yetkiler,
- * grup içinde tanımlanacak olan tüm rotalar için geçerli olur.
- * Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
- */
+```
+ #### Rota grupları için middleware tanımlaması.
+ Bir rota grubu için tanımlanan rol veya yetkiler, grup içinde tanımlanacak olan tüm rotalar için geçerli olur. Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
+ ```php
 Route::group([
 	'prefix'     => 'admin/dashboard',
 	'middleware' => 'role:Admin|Editor'
 ], function () 
 {
-	Route::get('admin/posts', 'BackendPostController@index');
-	Route::get('admin/posts/{id}', 'BackendPostController@edit');
+	Route::get('posts', 'BackendPostController@index');
+	Route::get('posts/{id}', 'BackendPostController@edit');
 	...
 /**
  * Rota grupları için middleware'de 'yetki' tanımlama
@@ -130,7 +126,7 @@ Route::group([
 	'middleware' => 'permission:edit-post|delete-post|upload'
 ], function () 
 {
-	Route::get('admin/posts', 'BackendPostController@index');
-	Route::get('admin/posts/{id}', 'BackendPostController@edit');
+	Route::get('posts', 'BackendPostController@index');
+	Route::get('posts/{id}', 'BackendPostController@edit');
 	...
 ```
