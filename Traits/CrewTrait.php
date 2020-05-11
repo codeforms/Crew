@@ -26,11 +26,11 @@ trait CrewTrait
      */
     public function hasRole(...$roles): bool
     {
-        if((bool)count($roles))
-             foreach(Arr::flatten($roles) as $role)
-                return $this->roles->contains('slug', $role);
+        $states = [];
+        foreach(Arr::flatten($roles) as $role)
+            $states[] = $this->roles->contains('slug', $role);
 
-        return false;
+        return in_array(true, $states);
     }
 
     /**
