@@ -164,7 +164,7 @@ Route::group([
 	...
 ```
 
-## Rol ve Yetki oluşturma işlemleri
+## Rol ve Yetki oluşturma işlemleri (Temel CRUD işlemleri)
 ```php
 <?php
 # CodeForms\Repositories\Crew\Models\Role;
@@ -178,7 +178,7 @@ Role::where('id', $role_id)->update([
 	'name' => 'Site yöneticisi',
 	'slug' => 'manager'
 ]);
-# Yetki silme
+# Rol silme
 Role::destroy($role_id);
 Role::destroy([1,2,3]); // birden fazla role id'ler ile silme
 
