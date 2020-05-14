@@ -131,6 +131,7 @@ Route::get('admin/posts', 'BackendPostController@index')->middleware('role:Admin
  #### Rota grupları için middleware tanımlaması.
  Bir rota grubu için tanımlanan rol veya yetkiler, grup içinde tanımlanacak olan tüm rotalar için geçerli olur. Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
  ```php
+ <?php
 Route::group([
 	'prefix'     => 'admin/dashboard',
 	'middleware' => 'role:Admin|Editor'
