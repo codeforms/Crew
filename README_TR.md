@@ -5,13 +5,12 @@ Laravel tabanlı yapılar için basit ve hafif kullanıcı grupları ve yetkiler
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/codeforms/Crew)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](https://github.com/codeforms/Crew/releases)
 
-> Crew yapısı, rol ve yetki oluşturma/düzenleme/silme vb klasik CRUD işlemleri için metotlar içermez. Laravel'de CRUD işlemlerinin nasıl yapıldığına dair internet üzerinden birçok kaynağa erişilebilir.
-
 ## Kurulum
 * Migration dosyasını kullanarak veri tabanı için gerekli tabloları oluşturun;
 ``` php artisan migrate```
 * Laravel'in app.php config dosyasının ```providers``` alanına aşağıdaki satırı ekleyin;
 ```php
+<?php
 'providers' => [
 	...
 	...
@@ -21,6 +20,7 @@ Laravel tabanlı yapılar için basit ve hafif kullanıcı grupları ve yetkiler
 ```
 * app/Http/Kernel.php dosyasındaki ```routeMiddleware``` bölümüne aşağıdaki satırları ekleyin.
 ```php
+<?php
 protected $routeMiddleware = [
 	...
 	'role'       => \CodeForms\Repositories\Crew\Middleware\RoleMiddleware::class,
@@ -30,6 +30,7 @@ protected $routeMiddleware = [
 ```
 * Son olarak app/User.php model dosyanıza Crew yapısına ait CrewTrait dosyasını ekleyin;
 ```php
+<?php
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -48,6 +49,7 @@ class User extends Authenticatable
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
 ```php
+<?php
 /**********************
  * Kullanıcı işlemleri
  */
@@ -105,6 +107,7 @@ Blade dosyaları içinde yetki sorgulamak için Laravel'in varsayılan @can dire
 #### Rota(route) dosyalarında role ve yetkilerin kullanımı
 Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabilir. Yetki veya roller, rotanın ```middleware``` alanında belirtilir. Birden fazla rol ve yetki belirtmek istediğimizde, her bir rol ve yetki arasına '\|' dik çizgi (pipe) işareti konulur.
 ```php
+<?php
 /**********************
  * Yetkiler
  */
@@ -158,4 +161,38 @@ Route::group([
 	# bu rotaya erişemez.
 	Route::post('posts/{id}/delete', 'BackendPostController@delete')->middleware('role:Admin');
 	...
+```
+
+## Rol ve Yetki oluşturma işlemleri
+```php
+<?php
+# CodeForms\Repositories\Crew\Models\Role;
+# Yeni rol oluşturma
+Role::create([
+	'name' => 'Admin',
+	'slug' => 'admin'
+]);
+# Rol düzenleme
+Role::where('id', $role_id)->update([
+	'name' => 'Site yöneticisi',
+	'slug' => 'manager'
+]);
+# Yetki silme
+Role::destroy($role_id);
+Role::destroy([1,2,3]); // birden fazla role id'ler ile silme
+
+# CodeForms\Repositories\Crew\Models\Permission;
+# Yeni yetki oluşturma
+Permission::create([
+	'name' => 'Yönetim ekranına erişim',
+	'slug' => 'dashboard'
+]);
+# Yetki düzenleme
+Permission::where('id', $permission_id)->update([
+	'name' => 'İçerik düzenleme yetkisi',
+	'slug' => 'edit-content'
+]);
+# Yetki silme
+Permission::destroy($permission_id);
+Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
 ```
