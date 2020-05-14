@@ -44,7 +44,7 @@ class User extends Authenticatable
 ```
 
 ## Kullanım
-> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. CRUD işlemleri için ```Models``` dizininde yer alan ```Role``` ve ```Permission``` model dosyalarını kullanınız.
+> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. CRUD işlemleri için ```Models``` dizininde yer alan ```Role``` ve ```Permission``` model dosyalarını kullanınız. CRUD işlemleriyle ilgili örnekler, dokümantasyonun en alt bölümünde yer almaktadır.
 
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
