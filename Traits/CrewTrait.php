@@ -45,6 +45,8 @@ trait CrewTrait
     {
         if((bool)count($roles))
             return $this->roles()->sync(self::roleCollection(Arr::flatten($roles)));
+        
+        return $this->roles()->sync($roles);
     }
 
     /**
