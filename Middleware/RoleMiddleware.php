@@ -16,12 +16,7 @@ class RoleMiddleware
      */
     public function handle($request, Closure $next, $role)
     {
-        if(auth()->guest())
-            abort(403);
-
-        $roles = explode(',', preg_replace("/\|/", ",", $role));
-
-        if (!$request->user()->hasRole($roles)) 
+        if (auth()->guest() or !$request->user()->hasRole(explode('|', $role))) 
            abort(403);
 
         return $next($request);

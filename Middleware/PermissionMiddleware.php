@@ -18,10 +18,8 @@ class PermissionMiddleware
     {
         if(auth()->guest()) 
             abort(403);
-        
-        $permissions = is_array($permission) ? $permission : explode('|', $permission);
 
-        foreach($permissions as $permission)
+        foreach(explode('|', $permission) as $permission)
             if(auth()->user()->hasPermission($permission))
                 return $next($request);
 
