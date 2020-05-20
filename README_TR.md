@@ -41,25 +41,29 @@ class User extends Authenticatable
 ## Kullanım
 #### Rol ve yetki oluşturma
 Rol ve yetkiler, klasik CRUD işlemleriyle oluşturulur. CRUD işlemleri için ```Models``` dizininde yer alan **Role** ve **Permission** model dosyaları kullanılmalıdır.
+
+> Role ve Yetki oluştururken kaydedilecek olan '**slug**' verisi, tüm sorgu işlemleri için birincil ölçüttür.
  
+##### Rol oluşturma/düzenleme/silme
 ```php
 <?php
-# CodeForms\Repositories\Crew\Models\Role;
 # Yeni rol oluşturma
 Role::create([
-	'name' => 'Admin',
-	'slug' => 'admin'
+	'name' => 'Site Yöneticisi',
+	'slug' => 'Admin'
 ]);
 # Rol düzenleme
 Role::where('id', $role_id)->update([
-	'name' => 'Site yöneticisi',
-	'slug' => 'manager'
+	'name' => 'Site Editörü',
+	'slug' => 'Editor'
 ]);
 # Rol silme
 Role::destroy($role_id);
 Role::destroy([1,2,3]); // birden fazla role id'ler ile silme
-
-# CodeForms\Repositories\Crew\Models\Permission;
+```
+##### Yetki oluşturma/düzenleme/silme
+```php
+<?php
 # Yeni yetki oluşturma
 Permission::create([
 	'name' => 'Yönetim ekranına erişim',
@@ -75,7 +79,7 @@ Permission::destroy($permission_id);
 Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
 ```
 
-> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız.
+> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. Rol ve yetki sorgulamaları için '**slug**' bilgisi ölçüt alınır.
 
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
@@ -97,8 +101,8 @@ $user->hasPermission(['edit-post', 'delete-post']);
 ```php
 <?php
 # bir kullanıcıya rol atama 
-$user->setRole('Admin');
-$user->setRole(['User', 'Customer']); // array olarak çoklu atama
+$user->setRole('site-yoneticisi');
+$user->setRole(['kullanici', 'musteri']); // array olarak çoklu atama
 
 # bir kullanıcıya yetkiler atama
 $user->setPermission('edit-post');
