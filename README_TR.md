@@ -101,8 +101,8 @@ $user->hasPermission(['edit-post', 'delete-post']);
 ```php
 <?php
 # bir kullanıcıya rol atama 
-$user->setRole('site-yoneticisi');
-$user->setRole(['kullanici', 'musteri']); // array olarak çoklu atama
+$user->setRole('Admin');
+$user->setRole(['User', 'Customer']); // array olarak çoklu atama
 
 # bir kullanıcıya yetkiler atama
 $user->setPermission('edit-post');
