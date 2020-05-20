@@ -8,27 +8,22 @@ Laravel tabanlı yapılar için basit ve hafif kullanıcı grupları ve yetkiler
 ## Kurulum
 * Migration dosyasını kullanarak veri tabanı için gerekli tabloları oluşturun;
 ``` php artisan migrate```
-* Laravel'in app.php config dosyasının ```providers``` alanına aşağıdaki satırı ekleyin;
+* Laravel'in **app.php** config dosyasının ```providers``` alanına **ayrıca** aşağıdaki satırı ekleyin;
 ```php
 <?php
 'providers' => [
-	...
-	...
 	CodeForms\Repositories\Crew\Providers\CrewServiceProvider::class,
-	...
 ]
 ```
-* app/Http/Kernel.php dosyasındaki ```routeMiddleware``` bölümüne aşağıdaki satırları ekleyin.
+* **app/Http/Kernel.php** dosyasındaki ```routeMiddleware``` bölümüne **ayrıca** aşağıdaki satırları ekleyin.
 ```php
 <?php
 protected $routeMiddleware = [
-	...
 	'role'       => \CodeForms\Repositories\Crew\Middleware\RoleMiddleware::class,
 	'permission' => \CodeForms\Repositories\Crew\Middleware\PermissionMiddleware::class,
-	...
 ];
 ```
-* Son olarak app/User.php model dosyanıza Crew yapısına ait CrewTrait dosyasını ekleyin;
+* Son olarak ```app/User.php``` model dosyanıza **CrewTrait** dosyasını ekleyin;
 ```php
 <?php
 namespace App;
@@ -44,127 +39,9 @@ class User extends Authenticatable
 ```
 
 ## Kullanım
-> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. CRUD işlemleri için ```Models``` dizininde yer alan ```Role``` ve ```Permission``` model dosyalarını kullanınız. CRUD işlemleriyle ilgili örnekler, dokümantasyonun en alt bölümünde yer almaktadır.
-
-#### Rol ve Yetki Sorgulama
-Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
-```php
-<?php
-/**********************
- * Kullanıcı işlemleri
- */
-$user = User::find(1);
-// hasRole ile tek bir kullanıcı rolü veya
-// array içinde birden fazla roller de sorgulanabilir.
-$user->hasRole('Admin');
-$user->hasRole(['Admin', 'Editor']);
-
-// hasPermission ile tek bir yetki veya 
-// array içinde birden fazla yetkiler de sorgulanabilir.
-$user->hasPermission('edit-post');
-$user->hasPermission(['edit-post', 'delete-post']);
-
-# bir kullanıcıya rol atama 
-$user->setRole('Admin');
-$user->setRole(['User', 'Customer']); // array olarak çoklu atama
-
-# bir kullanıcıya yetkiler atama
-$user->setPermission('edit-post');
-$user->setPermission(['edit-post', 'delete-post', 'upload']); // array olarak çoklu atama
-
-/**********************
- * Rol işlemleri
- */
-$role = Role::find(1);
-// bir rolün sahip olduğu yetkiler de aynı şekilde sorgulanabilir.
-$role->hasPermission('edit-post');
-$role->hasPermission(['edit-post', 'delete-post']);
-
-# bir role yetki(ler) atama
-$role->setPermission('edit-post');
-$role->setPermission(['edit-post', 'delete-post', 'upload']); // array olarak çoklu atama
-```
-#### Blade dosyalarında rol ve yetki sorgulama
-Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
-```blade
-@role('Editor')
-	Bu alanı sadece Editor rolüne sahip olan kullanıcılar görebilir.
-@else 
-	Bu alanı editörler göremez ancak editör dışındaki diğer rollere sahip olanlar görebilir.
-@endrole
-
-@role(['Editor', 'Admin'])
-	Bu bölümü sadece Editor ve Admin rolüne sahip olanlar görebilir.
-@endrole
-```
-Blade dosyaları içinde yetki sorgulamak için Laravel'in varsayılan @can direktifi kullanılabilir.
-```blade
-@can('edit-post')
-	'edit-post' yetkisine sahip olanlar görebilir.
-@endcan
-``` 
-
-#### Rota(route) dosyalarında role ve yetkilerin kullanımı
-Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabilir. Yetki veya roller, rotanın ```middleware``` alanında belirtilir. Birden fazla rol ve yetki belirtmek istediğimizde, her bir rol ve yetki arasına '\|' dik çizgi (pipe) işareti konulur.
-```php
-<?php
-/**********************
- * Yetkiler
- */
-# aşağıdaki 'admin' sayfasına sadece 'dashboard 'yetkisine
-# sahip olan kullanıcılar veya bu yetkiye sahip roller erişebilir
-Route::get('admin', 'DashboardController@index')->middleware('permission:dashboard');
-
-# aşağıdaki içerik düzenleme sayfasına sadece 'dashboard' ve 'edit-post'
-# yetkisine sahip kullanıcılar veya bu yetkiye sahip roller erişebilir.
-Route::get('admin/post/{id}', 'DashboardController@edit')->middleware('permission:dashboard|edit-post');
-
-/**********************
- * Roller
- */
-# Admin rolüne sahip olanlar bu sayfaya erişebilir 
-Route::get('admin/users', 'BackendUserController@index')->middleware('role:Admin');
-
-# Admin ve Editor rolüne sahip olanlar bu sayfaya erişebilir
-Route::get('admin/posts', 'BackendPostController@index')->middleware('role:Admin|Editor');
-```
- #### Rota grupları için middleware tanımlaması.
- Bir rota grubu için tanımlanan rol veya yetkiler, grup içinde tanımlanacak olan tüm rotalar için geçerli olur. Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
- ```php
- <?php
-Route::group([
-	'prefix'     => 'admin/dashboard',
-	'middleware' => 'role:Admin|Editor'
-], function () 
-{
-	Route::get('posts', 'BackendPostController@index');
-	Route::get('posts/{id}', 'BackendPostController@edit');
-	...
-/**********************
- * Rota grupları için middleware'de 'yetki' tanımlama
- */
-Route::group([
-	'prefix'     => 'admin/dashboard',
-	'middleware' => 'permission:edit-post|delete-post'
-], function () 
-{
-	Route::get('posts', 'BackendPostController@index');
-
-	# aşağıdaki rotaya, üstteki rota grubunda belirtilen 'edit-post' ve 'delete-post'
-	# yetkilerine sahip olmanın yanında, ayrıca 'upload' yetkisi olanlar girebilir.
-	# Yani bir kullanıcı, rota grubunda belirtilen yetkilere (edit-post, delete-post) 
-	# sahip olsa bile, eğer 'upload' yetkisine sahip değilse bu rotaya erişemez.
-	Route::get('posts/{id}', 'BackendPostController@edit')->middleware('permission:upload');
-
-	# bu rotaya, üstteki rota grubunda belirtilen yetkilere sahip olmanın yanında, 
-	# ayrıca 'Admin' rolüne sahip olanlar erişebilir. Yani bir kullanıcı, rota grubunda 
-	# belirtilen yetkilere (edit-post, delete-post) sahip olsa bile, eğer Admin değilse 
-	# bu rotaya erişemez.
-	Route::post('posts/{id}/delete', 'BackendPostController@delete')->middleware('role:Admin');
-	...
-```
-
-## Rol ve Yetki oluşturma işlemleri (Temel CRUD işlemleri)
+#### Rol ve yetki oluşturma
+Rol ve yetkiler, klasik CRUD işlemleriyle oluşturulur. CRUD işlemleri için ```Models``` dizininde yer alan **Role** ve **Permission** model dosyaları kullanılmalıdır.
+ 
 ```php
 <?php
 # CodeForms\Repositories\Crew\Models\Role;
@@ -196,4 +73,131 @@ Permission::where('id', $permission_id)->update([
 # Yetki silme
 Permission::destroy($permission_id);
 Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
+```
+
+> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız.
+
+#### Rol ve Yetki Sorgulama
+Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.
+
+##### Kullanıcı(lar) için rol ve yetki sorgulama;
+```php
+<?php
+$user = User::find(1);
+
+# bir kullanıcı için rol(ler) sorgulama
+$user->hasRole('Admin');
+$user->hasRole(['Admin', 'Editor']);
+
+# bir kullanıcı için yetki(ler) sorgulama
+$user->hasPermission('edit-post');
+$user->hasPermission(['edit-post', 'delete-post']);
+```
+##### Kullanıcılar için yetki ve rol atama işlemleri;
+```php
+<?php
+# bir kullanıcıya rol atama 
+$user->setRole('Admin');
+$user->setRole(['User', 'Customer']); // array olarak çoklu atama
+
+# bir kullanıcıya yetkiler atama
+$user->setPermission('edit-post');
+$user->setPermission(['edit-post', 'delete-post', 'upload']); // array olarak çoklu atama
+```
+##### Roller için yetki sorgulama ve atama işlemleri;
+```php
+<?php
+$role = Role::find(1);
+
+# bir rol için yetki sorgulama
+$role->hasPermission('edit-post');
+$role->hasPermission(['edit-post', 'delete-post']);
+
+# bir role yetki(ler) atama
+$role->setPermission('edit-post');
+$role->setPermission(['edit-post', 'delete-post', 'upload']); // array olarak çoklu atama
+```
+#### Blade dosyalarında rol ve yetki sorgulama
+Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
+```blade
+@role('Editor')
+	Bu alanı sadece Editor rolüne sahip olan kullanıcılar görebilir.
+@else 
+	Bu alanı editörler göremez ancak editör dışındaki diğer rollere sahip olanlar görebilir.
+@endrole
+
+@role(['Editor', 'Admin'])
+	Bu bölümü sadece Editor ve Admin rolüne sahip olanlar görebilir.
+@endrole
+```
+Blade dosyaları içinde yetki sorgulamak için Laravel'in varsayılan @can direktifi kullanılabilir.
+```blade
+@can('edit-post')
+	'edit-post' yetkisine sahip olanlar görebilir.
+@endcan
+``` 
+
+#### Rota(route) dosyalarında role ve yetkilerin kullanımı
+Crew yapısı sayesinde rol ve yetkiler aynı zamanda rotalarda da kullanılabilir. Yetki veya roller, rotanın ```middleware``` alanında belirtilir. Birden fazla rol ve yetki belirtmek istediğimizde, her bir rol ve yetki arasına '\|' dik çizgi (pipe) işareti konulur.
+
+##### Rotalar için middleware'de 'permission' kullanımı;
+
+```php
+<?php 
+# aşağıdaki 'admin' sayfasına sadece 'dashboard 'yetkisine
+# sahip olan kullanıcılar veya bu yetkiye sahip roller erişebilir
+Route::get('admin', 'DashboardController@index')->middleware('permission:dashboard');
+
+# aşağıdaki içerik düzenleme sayfasına sadece 'dashboard' ve 'edit-post'
+# yetkisine sahip kullanıcılar veya bu yetkiye sahip roller erişebilir.
+Route::get('admin/post/{id}', 'DashboardController@edit')->middleware('permission:dashboard|edit-post');
+```
+
+##### Rotalar için middleware'de 'role' kullanımı;
+
+```php
+# Bu rotaya sadece 'Admin' rolüne sahip olanlar erişebilir 
+Route::get('admin/users', 'BackendUserController@index')->middleware('role:Admin');
+
+# Bu rotaya sadece Admin veya Editor rolüne sahip olanlar erişebilir
+Route::get('admin/posts', 'BackendPostController@index')->middleware('role:Admin|Editor');
+```
+#### Rota grupları için middleware tanımlaması.
+Bir rota grubu için tanımlanan rol veya yetkiler, grup içinde tanımlanacak olan tüm rotalar için geçerli olur. Böylece her bir rota için ayrı ayrı middleware tanımlaması yapılmaz.
+
+##### Rota grupları için middleware'de rol tanımlama;
+```php
+<?php
+Route::group([
+	'prefix'     => 'admin/dashboard',
+	'middleware' => 'role:Admin|Editor'
+], function () 
+{
+	/**
+	* Aşağıdaki rotalara sadece Admin ve Editor rollerine
+	* sahip kullanıcılara erişebilir.
+	*/
+	Route::get('posts', 'BackendPostController@index');
+	Route::get('posts/{id}', 'BackendPostController@edit');
+});
+```
+##### Rota grupları için middleware'de yetki tanımlama;
+```php
+<?php
+Route::group([
+	'prefix'     => 'admin/dashboard',
+	'middleware' => 'permission:edit-post|delete-post'
+], function () 
+{
+	Route::get('posts', 'BackendPostController@index');
+
+	# bir kullanıcı, rota grubunda belirtilen yetkilere (edit-post, delete-post) 
+	# sahip olsa bile, eğer bu rotada ek olarak belirtilen 'upload' yetkisine sahip değilse
+	# bu rotaya erişemez.
+	Route::get('posts/{id}', 'BackendPostController@edit')->middleware('permission:upload');
+
+	# bir kullanıcı, rota grubunda belirtilen yetkilere (edit-post, delete-post) 
+	# sahip olsa bile, eğer 'Admin' değilse bu rotaya erişemez.
+	Route::post('posts/{id}/delete', 'BackendPostController@delete')->middleware('role:Admin');
+});
 ```
