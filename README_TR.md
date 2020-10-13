@@ -121,6 +121,14 @@ $role->hasPermission(['edit-post', 'delete-post']);
 $role->setPermission('edit-post');
 $role->setPermission(['edit-post', 'delete-post', 'upload']); // array olarak çoklu atama
 ```
+##### Yetkiler için rol atama işlemleri;
+```php
+<?php
+$permission = Permission::find(1);
+
+# bir yetki için rol/ler atama
+$permission->roles()->sync([1,2,3]);
+```
 #### Blade dosyalarında rol ve yetki sorgulama
 Laravel'in blade şablon dosyalarında da rol ve yetki sorgulaması kolaylıkla yapılabilir. 
 ```blade
