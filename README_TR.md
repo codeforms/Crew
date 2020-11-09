@@ -78,8 +78,17 @@ Permission::where('id', $permission_id)->update([
 Permission::destroy($permission_id);
 Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
 ```
+#### Role isimlerine göre kullanıcıları alma
+```role()``` metoduyla sadece belirttiğiniz role sahip kullanıcıları alırken, ```exceptRole()``` metoduyla belirttiğiniz roller dışındaki tüm kullanıcıları alabilirsiniz. Rol isim veya isimleri her zaman ```array``` içinde tanımlanmalıdır.
 
-> Aşağıda kullanılan rol ve yetki isimleri sadece örnektir. CRUD işlemleri ile kendi oluşturduğunuz rol ve yetki isimlerini kullanmalısınız. Rol ve yetki sorgulamaları için '**slug**' bilgisi ölçüt alınır.
+```php
+<?php
+User::role(['admin'])->get();
+User::role(['admin', 'editor'])->get();
+
+User::exceptRole(['admin'])->get();
+User::exceptRole(['editor', 'customer'])->get();
+```
 
 #### Rol ve Yetki Sorgulama
 Tüm sorgulama metotları her zaman bool (true/false) döner. Aşağıdaki örnekler PHP kodları içinde kullanılır.

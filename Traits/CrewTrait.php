@@ -80,6 +80,34 @@ trait CrewTrait
 
     /**
      * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+	 * @param array $name
+	 * 
+	 * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRole($query, array $name)
+    {
+        return $query->whereHas("roles", function($roles) use($name) {
+            $roles->whereIn("roles.slug", Arr::flatten($name));
+        });
+    }
+
+    /**
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+	 * @param array $name
+	 * 
+	 * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExceptRole($query, array $name)
+    {
+        return $query->whereHas("roles", function($roles) use($name) {
+            $roles->whereNotIn("roles.slug", Arr::flatten($name));
+        });
+    }
+
+    /**
+     * 
      */
     public function roles()
     {
