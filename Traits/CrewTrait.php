@@ -81,11 +81,11 @@ trait CrewTrait
     /**
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
-	 * @param array $name
+	 * @param string|array $name
 	 * 
 	 * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeRole($query, array $name)
+    public function scopeRole($query, ...$name)
     {
         return $query->whereHas("roles", function($roles) use($name) {
             $roles->whereIn("roles.slug", Arr::flatten($name));
@@ -95,11 +95,11 @@ trait CrewTrait
     /**
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
-	 * @param array $name
+	 * @param string|array $name
 	 * 
 	 * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeExceptRole($query, array $name)
+    public function scopeExceptRole($query, ...$name)
     {
         return $query->whereHas("roles", function($roles) use($name) {
             $roles->whereNotIn("roles.slug", Arr::flatten($name));

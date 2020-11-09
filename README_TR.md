@@ -44,50 +44,16 @@ Rol ve yetkiler, klasik CRUD işlemleriyle oluşturulur. CRUD işlemleri için `
 
 > Role ve Yetki oluştururken kaydedilecek olan '**slug**' verisi, tüm sorgu işlemleri için birincil ölçüttür.
  
-##### Rol oluşturma/düzenleme/silme
-```php
-<?php
-# Yeni rol oluşturma
-Role::create([
-	'name' => 'Site Yöneticisi',
-	'slug' => 'Admin'
-]);
-# Rol düzenleme
-Role::where('id', $role_id)->update([
-	'name' => 'Site Editörü',
-	'slug' => 'Editor'
-]);
-# Rol silme
-Role::destroy($role_id);
-Role::destroy([1,2,3]); // birden fazla role id'ler ile silme
-```
-##### Yetki oluşturma/düzenleme/silme
-```php
-<?php
-# Yeni yetki oluşturma
-Permission::create([
-	'name' => 'Yönetim ekranına erişim',
-	'slug' => 'dashboard'
-]);
-# Yetki düzenleme
-Permission::where('id', $permission_id)->update([
-	'name' => 'İçerik düzenleme yetkisi',
-	'slug' => 'edit-content'
-]);
-# Yetki silme
-Permission::destroy($permission_id);
-Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
-```
-#### Role isimlerine (slug) göre kullanıcıları alma
-```role()``` metoduyla sadece belirttiğiniz role sahip kullanıcıları alırken, ```exceptRole()``` metoduyla belirttiğiniz roller dışındaki tüm kullanıcıları alabilirsiniz. Rol isim veya isimleri (slug adları) her zaman ```array``` içinde tanımlanmalıdır.
+#### Rollere göre kullanıcıları alma
+```role()``` metoduyla sadece belirttiğiniz role sahip kullanıcıları alırken, ```exceptRole()``` metoduyla belirttiğiniz roller dışındaki tüm kullanıcıları alabilirsiniz. Rol isim veya isimleri (slug adları) tek bir string veya ```array``` içinde çoklu olarak tanımlanabilir.
 
 ```php
 <?php
-User::role(['admin'])->get();
-User::role(['admin', 'editor'])->get();
+User::role('admin')->get(); // sadece admin kullanıcıları
+User::role(['admin', 'editor'])->get(); // sadece admin ve editor kullanıcıları
 
-User::exceptRole(['admin'])->get();
-User::exceptRole(['editor', 'customer'])->get();
+User::exceptRole('admin')->get(); // admin dışındaki tüm kullanıcıları
+User::exceptRole(['editor', 'customer'])->get(); // editor ve customer dışındaki tüm kullanıcıları
 ```
 
 #### Rol ve Yetki Sorgulama
