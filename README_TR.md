@@ -78,8 +78,8 @@ Permission::where('id', $permission_id)->update([
 Permission::destroy($permission_id);
 Permission::destroy([1,2,3]); // birden fazla permission id'ler ile silme
 ```
-#### Role isimlerine göre kullanıcıları alma
-```role()``` metoduyla sadece belirttiğiniz role sahip kullanıcıları alırken, ```exceptRole()``` metoduyla belirttiğiniz roller dışındaki tüm kullanıcıları alabilirsiniz. Rol isim veya isimleri her zaman ```array``` içinde tanımlanmalıdır.
+#### Role isimlerine (slug) göre kullanıcıları alma
+```role()``` metoduyla sadece belirttiğiniz role sahip kullanıcıları alırken, ```exceptRole()``` metoduyla belirttiğiniz roller dışındaki tüm kullanıcıları alabilirsiniz. Rol isim veya isimleri (slug adları) her zaman ```array``` içinde tanımlanmalıdır.
 
 ```php
 <?php
