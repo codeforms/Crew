@@ -14,15 +14,15 @@ class PermissionMiddleware
      * 
      * @return mixed
      */
-    public function handle($request, Closure $next, $permission)
+    public function handle($request, Closure $next, $permissions)
     {
         if(auth()->guest()) 
             abort(403);
 
-        foreach(explode('|', $permission) as $permission)
-            if(auth()->user()->hasPermission($permission))
-                return $next($request);
+        foreach(explode('|', $permissions) as $permission)
+            if(!auth()->user()->hasPermission($permission))
+                abort(403);
 
-        abort(403);
+        return $next($request);
     }
 }
