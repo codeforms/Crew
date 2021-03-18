@@ -56,10 +56,10 @@ trait PermissionTrait
      */
     private function hasThisPermission($permission): bool
     {
-        return (bool)$this->permissions->where('slug', $permission)->count();
+        return !$this->permissions->where('slug', $permission)->isEmpty();
     }
 
-    /**
+     /**
      * @param array $permissions
      * @access private
      * 
