@@ -27,9 +27,6 @@ trait PermissionTrait
     public function hasRolePermission($permission): bool
     {
         if(!isset($this->roles))
-            return false;
-
-        if((bool)$this->roles()->count())
             foreach($this->roles as $role)
                 return $role->hasPermission($permission);
 
